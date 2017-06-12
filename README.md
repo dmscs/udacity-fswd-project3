@@ -17,7 +17,7 @@ Now move **log_analysis.py** to **/vagrant** directory. Then launch program:
 ```
 python log_analysis.py
 ```
-The program will output ***sql_query_results.txt** file upon completion.
+The program will output **sql_query_results.txt** file upon completion.
 
 ## Special Note:
 Output text file **sql_query_results.txt** should not be opened on Windows Text Editor.
