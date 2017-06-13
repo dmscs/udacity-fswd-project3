@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import psycopg2
 
 DBNAME = 'news'
@@ -8,10 +9,12 @@ def top_articles():
     db = psycopg2.connect(database=DBNAME)
     c = db.cursor()
     c.execute("""
-        select articles.title, count(log.path) as num
-            from articles left join log
+        select articles.title, num
+            from articles
+            left join (select log.path, count(log.path) as num
+                       from log
+                       group by log.path) as log
                 on log.path like concat('%', articles.slug)
-            group by articles.title
             order by num desc limit 3;
         """)
     posts = c.fetchall()
@@ -26,7 +29,9 @@ def top_authors():
     c.execute("""
     select authors.name, sum(article_count.num)
         from (select articles.author, count(log.path) as num
-            from articles left join log
+            from articles left join
+                (select log.path
+                from log) as log
                 on log.path like concat('%', articles.slug)
             group by articles.author
             order by num desc)
@@ -36,7 +41,6 @@ def top_authors():
         group by authors.name
         order by sum desc;
         """)
-
     posts = c.fetchall()
     db.close()
     return posts
@@ -65,21 +69,17 @@ def request_errors():
 
 def make_txt_file():
     """Turns queries into text file"""
-    file = open("sql_query_results.txt","w+")
+    file = open("sql_query_results.txt", "w+")
+    file.write('What are the most popular three articles?\n\n')
     for line in top_articles():
-        print line
-        file.write(line[0] + ' ' + str(line[1]))
-        file.write('\n')
-    file.write('\n')
+        file.write(line[0] + ' ' + str(line[1]) + ' views\n')
+    file.write('\nWho are the most popular article authors of all time?\n\n')
     for line in top_authors():
-        print line
-        file.write(line[0] + ' ' + str(line[1]))
-        file.write('\n')
-    file.write('\n')
+        file.write(line[0] + ' ' + str(line[1]) + ' views\n')
+    file.write('''\nOn which days did more than 1% of requests
+                lead to errors?\n\n''')
     for line in request_errors():
-        print line
-        file.write(str(line[0]) + ' ' + str(line[1]))
-        file.write('\n')
+        file.write(str(line[0]) + ' ' + str(line[1]) + '% errors\n')
     file.close()
 
 

@@ -12,6 +12,8 @@ vagrant ssh
 cd /vagrant
 ```
 
+Next, download the data. Detailed instructions can be found [here](https://classroom.udacity.com/nanodegrees/nd004/parts/8d3e23e1-9ab6-47eb-b4f3-d5dc7ef27bf0/modules/bc51d967-cb21-46f4-90ea-caf73439dc59/lessons/262a84d7-86dc-487d-98f9-648aa7ca5a0f/concepts/a9cf98c8-0325-4c68-b972-58d5957f1a91). 
+
 Now move **log_analysis.py** to **/vagrant** directory. Then launch program:
 
 ```
